@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="https://lucide.dev/scissors.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peluquería Marzetti | Mendoza</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gold: {
+                400: '#E6C200',
+                500: '#D4AF37', // Primary Gold
+                600: '#B5952F',
+              },
+              dark: {
+                900: '#121212',
+                800: '#1E1E1E',
+                700: '#2D2D2D',
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+    {
+      "imports": {
+        "framer-motion": "https://esm.sh/framer-motion@^12.26.1",
+        "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
+      }
+    }
+    </script>
+    <style>
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+  <body class="bg-neutral-50 text-neutral-900 font-sans antialiased">
+    <div id="root"></div>
+  </body>
+</html>
