@@ -26,7 +26,7 @@ export const SERVICES: Service[] = [
   { id: '5', name: 'Servicio a Domicilio', description: 'La experiencia Marzetti en tu hogar', iconName: 'Home' },
 ];
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
 export const TEAM: TeamMember[] = [
   { id: '1', name: 'Cristian Marzetti', role: 'Fundador & Master Stylist', image: '/images/equipo/cristian.jpg' },
