@@ -1,0 +1,33 @@
+{
+  "vigencia": "2026-01-19",
+  "version": "1.0",
+  "moneda": "ARS",
+  "servicios": [
+    {
+      "id": "corte-mujer",
+      "nombre": "Corte de cabello",
+      "precio_desde": 8000,
+      "precio_hasta": 12000,
+      "nota": "Precio final segun largo y complejidad"
+    },
+    {
+      "id": "coloracion-global",
+      "nombre": "Coloracion global",
+      "precio_desde": 15000,
+      "precio_hasta": 25000,
+      "nota": "No incluye decoloracion previa"
+    },
+    {
+      "id": "mechas-balayage",
+      "nombre": "Mechas o Balayage",
+      "precio_desde": 20000,
+      "precio_hasta": 35000,
+      "nota": "Segun cantidad de mechones y tecnica"
+    }
+  ],
+  "politicas": [
+    "Precios orientativos, cotizacion final en consulta",
+    "Promociones vigentes consultar en /promos",
+    "Metodos de pago: efectivo, transferencia, Mercado Pago"
+  ]
+}

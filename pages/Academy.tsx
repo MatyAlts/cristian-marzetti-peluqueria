@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { COURSES, CONTACT_INFO } from '../constants';
 import { Button } from '../components/Button';
 import { CheckCircle, Play } from 'lucide-react';
 
 export const Academy: React.FC = () => {
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlayClick = () => {
+    if (videoRef.current && !isVideoPlaying) {
+      setIsVideoPlaying(true);
+      videoRef.current.play();
+    }
+  };
   return (
     <div className="pt-20 pb-16">
       {/* Hero */}
@@ -23,13 +32,24 @@ export const Academy: React.FC = () => {
             </div>
             <div className="flex-1 w-full">
                <div className="aspect-video bg-neutral-800 rounded-xl overflow-hidden shadow-2xl relative group cursor-pointer border border-neutral-700">
-                 {/* Simulate Video Player */}
-                 <img src="https://picsum.photos/800/450?random=88" className="w-full h-full object-cover opacity-60" alt="Video cover" />
-                 <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-gold-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <Play className="fill-dark-900 text-dark-900 ml-1 w-8 h-8" />
-                    </div>
-                 </div>
+                 <video 
+                   ref={videoRef}
+                   src="/images/academia/intro.mp4"
+                   poster="/images/academia/demo.jpg"
+                   controls={isVideoPlaying}
+                   className="w-full h-full object-cover"
+                   onClick={handlePlayClick}
+                 />
+                 {!isVideoPlaying && (
+                   <div className="absolute inset-0 flex items-center justify-center">
+                      <div 
+                        className="w-20 h-20 bg-gold-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform cursor-pointer"
+                        onClick={handlePlayClick}
+                      >
+                        <Play className="fill-dark-900 text-dark-900 ml-1 w-8 h-8" />
+                      </div>
+                   </div>
+                 )}
               </div>
             </div>
           </div>

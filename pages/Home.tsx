@@ -2,7 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Scissors, Star, Calendar, GraduationCap } from 'lucide-react';
 import { Button } from '../components/Button';
-import { PRODUCTS, SERVICES } from '../constants';
+import { SERVICES, API_URL } from '../constants';
+import { Product } from '../types';
 
 export const Home: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -10,60 +11,270 @@ export const Home: React.FC = () => {
   const [startX, setStartX] = useState(0);
   const [initialScrollLeft, setInitialScrollLeft] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const scrollPosition = useRef(0);
+  const animationRef = useRef<number | null>(null);
+  const lastScrollLeft = useRef(0);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+  const userScrolling = useRef(false);
+  const isAutoScrolling = useRef(false);
+  const mouseVelocity = useRef(0);
+  const lastMouseX = useRef(0);
+  const lastMoveTime = useRef(0);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/products`)
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch(() => setProducts([]));
+  }, []);
+
+  const formatPrice = (price: number) =>
+    `$${price.toLocaleString('es-AR', { minimumFractionDigits: 0 })}`;
 
   // Duplicate products to create infinite scroll illusion
-  // 4 sets ensures we have enough content for the reset logic (Set 1+2 == Set 3+4)
-  const displayProducts = [...PRODUCTS, ...PRODUCTS, ...PRODUCTS, ...PRODUCTS];
+  // 6 sets for smoother infinite scroll
+  const displayProducts = [...products, ...products, ...products, ...products, ...products, ...products];
 
+  // Initialize scroll position in the middle for bidirectional infinite scroll
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container) {
+      // Start exactly in the middle (2.5 segments of 6)
+      const targetScroll = (container.scrollWidth / 6) * 2.5;
+      container.scrollLeft = targetScroll;
+      scrollPosition.current = targetScroll;
+      lastScrollLeft.current = targetScroll;
+    }
+  }, []);
+
+  // Sync scrollPosition ref and handle infinite scroll bounds
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
 
-    let animationId: number;
-
-    const animate = () => {
-      if (!isDragging && !isPaused) {
-        // Auto scroll speed
-        container.scrollLeft += 1;
-
-        // Infinite scroll reset:
-        // When we reach the middle (start of the 3rd set), jump back to 0 (start of 1st set).
-        // Since Set 3+4 is identical to Set 1+2, the jump is seamless.
-        if (container.scrollLeft >= container.scrollWidth / 2) {
-          container.scrollLeft = 0;
+    const handleScrollSync = () => {
+      const currentScroll = container.scrollLeft;
+      scrollPosition.current = currentScroll;
+      
+      // Ignore scroll events caused by auto-scroll
+      if (isAutoScrolling.current) {
+        return;
+      }
+      
+      // Detect user scrolling
+      if (!isDragging && !userScrolling.current) {
+        userScrolling.current = true;
+        if (!isPaused) {
+          setIsPaused(true);
         }
       }
-      animationId = requestAnimationFrame(animate);
+      
+      // Clear previous timeout
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+      
+      // Check if momentum has stopped
+      scrollTimeout.current = setTimeout(() => {
+        const scrollDiff = Math.abs(container.scrollLeft - lastScrollLeft.current);
+        
+        if (scrollDiff < 1) {
+          // Momentum has stopped, resume auto-scroll
+          userScrolling.current = false;
+          setIsPaused(false);
+        }
+        
+        lastScrollLeft.current = container.scrollLeft;
+      }, 150);
+      
+      // Check bounds for infinite scroll during manual scroll
+      const segmentWidth = container.scrollWidth / 6;
+      const currentSegment = Math.floor(currentScroll / segmentWidth);
+      
+      // Only reset if user scrolled to the edges
+      if (currentSegment >= 4 && currentScroll >= segmentWidth * 4.5) {
+        const offset = (currentScroll - segmentWidth * 4.5);
+        scrollPosition.current = segmentWidth * 2.5 + offset;
+        container.scrollLeft = scrollPosition.current;
+      } else if (currentSegment <= 0 && currentScroll < segmentWidth * 0.5) {
+        const offset = currentScroll;
+        scrollPosition.current = segmentWidth * 2.5 + offset;
+        container.scrollLeft = scrollPosition.current;
+      }
     };
 
-    animationId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationId);
+    container.addEventListener('scroll', handleScrollSync, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScrollSync);
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+    };
   }, [isDragging, isPaused]);
+
+  // Auto-scroll animation - works on all devices
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    let lastTime = Date.now();
+    const scrollSpeed = 80; // pixels per second
+
+    const animate = () => {
+      if (!isPaused && !isDragging && container) {
+        const now = Date.now();
+        const delta = (now - lastTime) / 1000;
+        lastTime = now;
+
+        // Mark that we're auto-scrolling
+        isAutoScrolling.current = true;
+
+        // Update scroll position smoothly
+        scrollPosition.current += scrollSpeed * delta;
+        container.scrollLeft = scrollPosition.current;
+
+        // Infinite loop logic
+        const segmentWidth = container.scrollWidth / 6;
+        
+        // When reaching end of segment 4, jump back to segment 2
+        if (scrollPosition.current >= segmentWidth * 4.5) {
+          scrollPosition.current = segmentWidth * 2.5;
+          container.scrollLeft = scrollPosition.current;
+        }
+        // When going back to start, jump forward
+        else if (scrollPosition.current <= segmentWidth * 0.5) {
+          scrollPosition.current = segmentWidth * 2.5;
+          container.scrollLeft = scrollPosition.current;
+        }
+        
+        // Reset flag after a small delay
+        setTimeout(() => {
+          isAutoScrolling.current = false;
+        }, 10);
+      } else {
+        // Update lastTime even when paused to prevent jumps
+        lastTime = Date.now();
+        isAutoScrolling.current = false;
+      }
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPaused, isDragging]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
     setIsDragging(true);
+    setIsPaused(true);
     setStartX(e.pageX);
     setInitialScrollLeft(scrollRef.current.scrollLeft);
-    setIsPaused(true);
+    lastMouseX.current = e.pageX;
+    lastMoveTime.current = Date.now();
+    mouseVelocity.current = 0;
+  };
+
+  const applyMouseMomentum = () => {
+    if (!scrollRef.current) return;
+    
+    const container = scrollRef.current;
+    let velocity = mouseVelocity.current * 1000; // Convert to pixels per second
+    const friction = 0.95; // Friction coefficient
+    const minVelocity = 0.5; // Minimum velocity to continue
+    
+    const momentumStep = () => {
+      if (Math.abs(velocity) < minVelocity) {
+        // Momentum finished
+        lastScrollLeft.current = container.scrollLeft;
+        return;
+      }
+      
+      // Apply velocity
+      scrollPosition.current -= velocity * 0.016; // 60fps
+      container.scrollLeft = scrollPosition.current;
+      
+      // Check infinite scroll bounds
+      const segmentWidth = container.scrollWidth / 6;
+      if (scrollPosition.current >= segmentWidth * 4.5) {
+        scrollPosition.current = segmentWidth * 2.5;
+        container.scrollLeft = scrollPosition.current;
+      } else if (scrollPosition.current <= segmentWidth * 0.5) {
+        scrollPosition.current = segmentWidth * 2.5;
+        container.scrollLeft = scrollPosition.current;
+      }
+      
+      // Apply friction
+      velocity *= friction;
+      
+      requestAnimationFrame(momentumStep);
+    };
+    
+    if (Math.abs(velocity) > minVelocity) {
+      requestAnimationFrame(momentumStep);
+    } else {
+      lastScrollLeft.current = container.scrollLeft;
+    }
   };
 
   const handleMouseLeave = () => {
+    if (isDragging) {
+      applyMouseMomentum();
+    }
     setIsDragging(false);
-    setIsPaused(false);
   };
 
   const handleMouseUp = () => {
+    if (isDragging) {
+      applyMouseMomentum();
+    }
     setIsDragging(false);
-    setIsPaused(false);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
+    
+    const currentTime = Date.now();
+    const deltaTime = currentTime - lastMoveTime.current;
+    const deltaX = e.pageX - lastMouseX.current;
+    
+    // Calculate velocity
+    if (deltaTime > 0) {
+      mouseVelocity.current = deltaX / deltaTime;
+    }
+    
+    lastMouseX.current = e.pageX;
+    lastMoveTime.current = currentTime;
+    
     const x = e.pageX;
-    const walk = (x - startX) * 2; // Scroll speed multiplier
+    const walk = (x - startX) * 2;
     scrollRef.current.scrollLeft = initialScrollLeft - walk;
+    scrollPosition.current = scrollRef.current.scrollLeft;
+  };
+
+  // Touch handlers for mobile devices
+  const handleTouchStart = () => {
+    userScrolling.current = true;
+    setIsPaused(true);
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current);
+    }
+  };
+
+  const handleTouchMove = () => {
+    // Keep tracking that user is touching
+  };
+
+  const handleTouchEnd = () => {
+    // Don't resume immediately - let scroll listener detect when momentum stops
+    lastScrollLeft.current = scrollRef.current?.scrollLeft || 0;
   };
 
   return (
@@ -73,7 +284,7 @@ export const Home: React.FC = () => {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://picsum.photos/1920/1080?random=1" 
+            src="/images/hero/main.jpg" 
             alt="Peluquería Marzetti Interior" 
             className="w-full h-full object-cover"
           />
@@ -107,12 +318,12 @@ export const Home: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1 grid grid-cols-2 gap-4">
-              <img src="https://picsum.photos/400/600?random=2" alt="Corte y Peinado" className="rounded-lg shadow-lg w-full h-64 object-cover -mt-8" />
-              <img src="https://picsum.photos/400/600?random=3" alt="Tratamiento Capilar" className="rounded-lg shadow-lg w-full h-64 object-cover mt-8" />
+              <img src="/images/nosotros/cliente_1.jpg" alt="Cliente 1" className="rounded-lg shadow-lg w-full h-64 object-cover -mt-8" />
+              <img src="/images/nosotros/cliente_2.jpg" alt="Cliente 2" className="rounded-lg shadow-lg w-full h-64 object-cover mt-8" />
             </div>
             <div className="order-1 lg:order-2">
               <h2 className="font-serif text-3xl lg:text-5xl font-bold text-dark-900 mb-6">
-                Nuestra Historia
+                Nuestros Clientes
               </h2>
               <p className="text-neutral-600 text-lg mb-6 leading-relaxed">
                 Peluquería Marzetti nace de la pasión por el detalle. Con años de trayectoria en Mendoza, hemos creado un espacio donde la técnica tradicional se fusiona con las tendencias modernas.
@@ -161,7 +372,7 @@ export const Home: React.FC = () => {
                     <div className="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
                   </div>
                 </div>
-                <img src="https://picsum.photos/800/450?random=4" alt="Academia Class" className="w-full h-full object-cover" />
+                <img src="/images/academia/demo.jpg" alt="Academia Class" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
@@ -183,26 +394,32 @@ export const Home: React.FC = () => {
         {/* Scroll Container */}
         <div 
           ref={scrollRef}
-          className={`w-full overflow-x-auto pb-8 hide-scrollbar cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
+          className={`w-full overflow-x-scroll pb-8 hide-scrollbar cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
+          style={{ 
+            WebkitOverflowScrolling: 'touch',
+            scrollBehavior: 'auto',
+            overscrollBehaviorX: 'none'
+          }}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
-          onTouchStart={() => setIsPaused(true)}
-          onTouchEnd={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <div className="flex px-4 gap-4 sm:gap-6 min-w-max">
             {displayProducts.map((product, index) => (
               <div 
                 key={`${product.id}-${index}`} 
-                className="w-[280px] sm:w-[320px] bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-neutral-100 select-none"
+                className="w-[280px] sm:w-[320px] bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-neutral-100 select-none hw-accelerate"
                 draggable="false"
               >
                 <div className="h-64 overflow-hidden relative group">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
+                  <img
+                    src={product.image_url ? `${API_URL}${product.image_url}` : 'https://placehold.co/400x400?text=Sin+imagen'}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none hw-accelerate"
                     draggable="false"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
@@ -211,7 +428,7 @@ export const Home: React.FC = () => {
                   <span className="text-xs font-bold text-gold-600 tracking-wider uppercase">{product.category}</span>
                   <h3 className="font-bold text-lg text-dark-900 mt-1 mb-2">{product.name}</h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-dark-900">{product.price}</span>
+                    <span className="text-xl font-bold text-dark-900">{formatPrice(product.price)}</span>
                     <Link to="/productos" onClick={(e) => {
                       if (isDragging) e.preventDefault();
                     }}>

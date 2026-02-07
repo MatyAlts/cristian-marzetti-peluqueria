@@ -15,6 +15,13 @@ View your app in AI Studio: https://ai.studio/apps/drive/19LiSicUE06G4CR1nmFWOrA
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. Set API environment variables in `.env.local` (see `.env.example`). These are used by the serverless functions, not exposed to the client.
+3. Initialize Postgres (creates tables and pgvector):
+   `npm run db:init`
+4. Ingest knowledge base into Postgres:
+   `npm run ingest`
+5. Run the app UI:
    `npm run dev`
+
+Optional: to run the API locally, use Vercel CLI from `frontend/`:
+`vercel dev`

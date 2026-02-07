@@ -46,8 +46,8 @@ export const About: React.FC = () => {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-             <img src="https://picsum.photos/400/500?random=50" className="w-full h-full object-cover rounded-lg shadow-md" alt="Salon interior" />
-             <img src="https://picsum.photos/400/500?random=51" className="w-full h-full object-cover rounded-lg shadow-md mt-8" alt="Stylist working" />
+             <img src="/images/equipo/corte_1.jpg" className="w-full h-full object-cover rounded-lg shadow-md" alt="Salon interior" />
+             <img src="/images/nosotros/cliente_4.jpg" className="w-full h-full object-cover rounded-lg shadow-md mt-8" alt="Stylist working" />
           </div>
         </div>
       </section>
@@ -56,7 +56,7 @@ export const About: React.FC = () => {
       <section className="py-12 bg-neutral-900 text-white">
         <div className="container mx-auto px-4">
           <h2 className="font-serif text-3xl font-bold text-center mb-12">Nuestro Equipo</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 max-w-md mx-auto">
             {TEAM.map((member) => (
               <div key={member.id} className="group relative overflow-hidden rounded-xl bg-neutral-800">
                 <div className="aspect-[3/4] overflow-hidden">

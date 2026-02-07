@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, MapPin, Phone, Clock } from 'lucide-react';
+import { Facebook, Instagram, MapPin, Phone, Clock } from 'lucide-react';
 import { CONTACT_INFO } from '../constants';
 
 export const Footer: React.FC = () => {
@@ -15,14 +15,11 @@ export const Footer: React.FC = () => {
               Más de 10 años definiendo el estilo en Mendoza. Un espacio donde la tradición se encuentra con la vanguardia.
             </p>
             <div className="flex gap-4 pt-2">
-              <a href="#" className="p-2 bg-dark-800 rounded-full hover:bg-gold-500 hover:text-dark-900 transition-colors">
+              <a href="https://www.instagram.com/cristian.marzetti/" target="_blank" rel="noopener noreferrer" className="p-2 bg-dark-800 rounded-full hover:bg-gold-500 hover:text-dark-900 transition-colors">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="p-2 bg-dark-800 rounded-full hover:bg-gold-500 hover:text-dark-900 transition-colors">
+              <a href="https://www.facebook.com/cristian.marzetti.92" target="_blank" rel="noopener noreferrer" className="p-2 bg-dark-800 rounded-full hover:bg-gold-500 hover:text-dark-900 transition-colors">
                 <Facebook size={20} />
-              </a>
-              <a href="#" className="p-2 bg-dark-800 rounded-full hover:bg-gold-500 hover:text-dark-900 transition-colors">
-                <Twitter size={20} />
               </a>
             </div>
           </div>
@@ -59,7 +56,17 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Map (Small placeholder) */}
-          <div className="rounded-lg overflow-hidden h-40 bg-dark-800">
+          <div className="rounded-lg overflow-hidden h-40 bg-dark-800 relative group">
+             <a 
+               href={CONTACT_INFO.mapUrl}
+               target="_blank"
+               rel="noopener noreferrer"
+               className="absolute inset-0 z-10 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-colors"
+             >
+               <span className="opacity-0 group-hover:opacity-100 bg-gold-500 text-dark-900 px-4 py-2 rounded-full font-bold text-sm transition-opacity">
+                 Abrir en Maps
+               </span>
+             </a>
              <iframe 
                 src={CONTACT_INFO.mapEmbedUrl}
                 width="100%" 
@@ -68,6 +75,7 @@ export const Footer: React.FC = () => {
                 allowFullScreen={false} 
                 loading="lazy"
                 title="Mini Map"
+                className="pointer-events-none"
             ></iframe>
           </div>
         </div>

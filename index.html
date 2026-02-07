@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="https://lucide.dev/scissors.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Peluquería Marzetti | Mendoza</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -31,29 +31,78 @@
       }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <script type="importmap">
-    {
-      "imports": {
-        "framer-motion": "https://esm.sh/framer-motion@^12.26.1",
-        "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0",
-        "react/": "https://esm.sh/react@^19.2.3/",
-        "react": "https://esm.sh/react@^19.2.3",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-        "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
-      }
-    }
-    </script>
     <style>
+      /* iOS Smooth Scrolling Optimizations */
+      * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+      }
+      
+      html {
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overscroll-behavior-y: none;
+        position: relative;
+      }
+      
+      /* Fix for iOS Chrome navbar */
+      nav {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+      }
+      
       .hide-scrollbar::-webkit-scrollbar {
         display: none;
       }
       .hide-scrollbar {
         -ms-overflow-style: none;
         scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        overscroll-behavior-x: contain;
+      }
+      
+      /* iOS Momentum Scrolling */
+      .ios-scroll {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: auto;
+        scroll-snap-type: x proximity;
+        overscroll-behavior-x: contain;
+      }
+      
+      .ios-scroll > * {
+        scroll-snap-align: start;
+      }
+      
+      /* Hardware acceleration for better iOS performance */
+      .hw-accelerate {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        will-change: transform;
+      }
+      
+      /* Optimize image rendering on iOS */
+      img {
+        -webkit-user-drag: none;
+        user-select: none;
+        pointer-events: none;
+      }
+      
+      /* Smooth transitions optimized for iOS */
+      .transition-smooth {
+        transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
       }
     </style>
   </head>
   <body class="bg-neutral-50 text-neutral-900 font-sans antialiased">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

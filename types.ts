@@ -1,9 +1,10 @@
 export interface Product {
-  id: string;
+  id: number;
   name: string;
-  price: string; // Formatted string
+  description: string | null;
+  price: number;
   category: string;
-  image: string;
+  image_url: string | null;
 }
 
 export interface Service {

@@ -13,8 +13,11 @@ export const Navbar: React.FC = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+    
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Close menu when route changes
@@ -22,19 +25,20 @@ export const Navbar: React.FC = () => {
     setIsOpen(false);
   }, [location]);
 
+  const isHomePage = location.pathname === '/';
+
   return (
     <>
       <nav 
-        className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${
-          isScrolled ? 'bg-dark-900/95 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'
-        }`}
+        className="fixed top-0 left-0 w-full z-50 bg-dark-900 shadow-lg py-3 transition-all duration-300"
+        style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className={`p-2 rounded-full ${isScrolled ? 'bg-gold-500' : 'bg-gold-500/90'} transition-colors`}>
+            <div className="p-2 rounded-full bg-gold-500 transition-colors">
               <Scissors className="w-6 h-6 text-dark-900" />
             </div>
-            <span className={`font-serif font-bold text-xl tracking-wide ${isScrolled ? 'text-white' : 'text-white drop-shadow-md'}`}>
+            <span className="font-serif font-bold text-xl tracking-wide text-white transition-colors">
               MARZETTI
             </span>
           </Link>
@@ -46,7 +50,7 @@ export const Navbar: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={`text-sm font-medium tracking-wide hover:text-gold-500 transition-colors ${
-                  location.pathname === item.path ? 'text-gold-500' : (isScrolled ? 'text-gray-200' : 'text-white drop-shadow-sm')
+                  location.pathname === item.path ? 'text-gold-500' : 'text-gray-200'
                 }`}
               >
                 {item.label.toUpperCase()}
@@ -54,7 +58,7 @@ export const Navbar: React.FC = () => {
             ))}
             <a 
               href="https://wa.me/5492612692207" 
-              className="bg-gold-500 text-dark-900 px-5 py-2 rounded-full font-bold text-sm hover:bg-gold-400 transition-colors"
+              className="bg-gold-500 text-dark-900 px-5 py-2 rounded-full font-bold text-sm hover:bg-gold-400 transition-colors shadow-lg"
             >
               RESERVAR
             </a>
@@ -63,7 +67,7 @@ export const Navbar: React.FC = () => {
           {/* Mobile Menu Button */}
           <button 
             onClick={() => setIsOpen(true)}
-            className="lg:hidden p-2 text-white focus:outline-none"
+            className="lg:hidden p-2 text-white focus:outline-none hover:text-gold-500 transition-colors"
             aria-label="Abrir menú"
           >
             <Menu className="w-8 h-8" />
@@ -79,7 +83,8 @@ export const Navbar: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-dark-900 flex flex-col"
+            className="fixed inset-0 z-[60] bg-dark-900 flex flex-col"
+            style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-800">
               <span className="font-serif font-bold text-xl text-gold-500 tracking-wide">MARZETTI</span>

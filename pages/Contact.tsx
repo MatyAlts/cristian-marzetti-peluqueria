@@ -56,7 +56,18 @@ export const Contact: React.FC = () => {
           </div>
 
           {/* Map */}
-          <div className="h-[400px] lg:h-auto min-h-[400px] bg-neutral-200 rounded-xl overflow-hidden shadow-md relative">
+          <div className="h-[400px] lg:h-auto min-h-[400px] bg-neutral-200 rounded-xl overflow-hidden shadow-md relative group">
+            <a 
+              href={CONTACT_INFO.mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute top-4 right-4 z-20 bg-white hover:bg-gold-500 text-dark-900 px-4 py-2 rounded-lg font-bold text-sm shadow-lg transition-colors flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Abrir en Maps
+            </a>
             <iframe 
                 src={CONTACT_INFO.mapEmbedUrl}
                 width="100%" 

@@ -1,11 +1,12 @@
-import { NavItem, Product, Service, TeamMember, Course } from './types';
+import { NavItem, Service, TeamMember, Course } from './types';
 
 export const CONTACT_INFO = {
   name: 'Cristian Marzetti',
   phone: '+5492612692207',
   address: 'Santiago Araujo 637, Mendoza, Argentina',
   hours: 'Lun-Vie 9-20hs, Sáb 9-18hs',
-  mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3348.978864708708!2d-68.8358!3d-32.9256!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzLCsDU1JzMyLjIiUyA2OMKwNTAnMDguOSJX!5e0!3m2!1ses!2sar!4v1620000000000!5m2!1ses!2sar",
+  mapUrl: 'https://maps.app.goo.gl/PbmJfDhcqRcasP95A',
+  mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3348.4!2d-68.8436!3d-32.8886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x967e0914497da78b%3A0x7e4c0c1e0c1e0c1e!2sSantiago%20Araujo%20637%2C%20Mendoza!5e0!3m2!1ses-419!2sar!4v1620000000000!5m2!1ses-419!2sar',
 };
 
 export const NAV_ITEMS: NavItem[] = [
@@ -25,18 +26,10 @@ export const SERVICES: Service[] = [
   { id: '5', name: 'Servicio a Domicilio', description: 'La experiencia Marzetti en tu hogar', iconName: 'Home' },
 ];
 
-export const PRODUCTS: Product[] = [
-  { id: '1', name: 'Shampoo Profesional', price: '$8.500', category: 'Cuidado', image: 'https://picsum.photos/400/400?random=10' },
-  { id: '2', name: 'Sérum Reparador', price: '$12.000', category: 'Nutrición', image: 'https://picsum.photos/400/400?random=11' },
-  { id: '3', name: 'Aceite de Argan', price: '$12.000', category: 'Nutrición', image: 'https://picsum.photos/400/400?random=12' },
-  { id: '4', name: 'Máscara Capilar', price: '$9.800', category: 'Hidratación', image: 'https://picsum.photos/400/400?random=13' },
-  { id: '5', name: 'Spray Fijador', price: '$6.500', category: 'Styling', image: 'https://picsum.photos/400/400?random=14' },
-];
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const TEAM: TeamMember[] = [
-  { id: '1', name: 'Cristian Marzetti', role: 'Fundador & Master Stylist', image: 'https://picsum.photos/400/600?random=20' },
-  { id: '2', name: 'Laura Gómez', role: 'Colorista Senior', image: 'https://picsum.photos/400/600?random=21' },
-  { id: '3', name: 'Pablo Ruiz', role: 'Estilista Senior', image: 'https://picsum.photos/400/600?random=22' },
+  { id: '1', name: 'Cristian Marzetti', role: 'Fundador & Master Stylist', image: '/images/equipo/cristian.jpg' },
 ];
 
 export const COURSES: Course[] = [

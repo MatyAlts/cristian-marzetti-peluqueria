@@ -1,0 +1,21 @@
+{
+  "vigencia": "2026-01-19",
+  "version": "1.0",
+  "moneda": "ARS",
+  "productos": [
+    {
+      "id": "shampoo-pro",
+      "nombre": "Shampoo profesional",
+      "precio": 8500,
+      "categoria": "Cuidado",
+      "nota": "Ideal para uso diario"
+    },
+    {
+      "id": "serum-reparador",
+      "nombre": "Serum reparador",
+      "precio": 12000,
+      "categoria": "Nutricion",
+      "nota": "Aplicar en medios y puntas"
+    }
+  ]
+}
