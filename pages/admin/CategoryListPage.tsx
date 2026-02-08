@@ -64,11 +64,8 @@ export const CategoryListPage: React.FC = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-serif text-3xl font-bold text-dark-900">Categorías</h1>
-          <p className="text-neutral-500 mt-1">Gestiona las categorías de productos</p>
-        </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-dark-900">Categorías</h1>
         <Link
           to="/admin/categorias/nueva"
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gold-500 text-dark-900 font-semibold hover:bg-gold-400 transition-colors"
