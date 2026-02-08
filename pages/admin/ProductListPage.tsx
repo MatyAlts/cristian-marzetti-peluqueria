@@ -79,14 +79,51 @@ export const ProductListPage: React.FC = () => {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-          <div className="overflow-x-auto">
+        <>
+          {/* Mobile: Cards */}
+          <div className="grid gap-4 md:hidden">
+            {products.map((p) => (
+              <div key={p.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 p-4">
+                <div className="flex gap-4">
+                  <img
+                    src={p.image_url ? `${API_URL}${p.image_url}` : 'https://placehold.co/80x80?text=—'}
+                    alt={p.name}
+                    className="w-20 h-20 object-cover rounded-lg border border-neutral-200 flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-dark-900 mb-1 truncate">{p.name}</h3>
+                    <p className="text-sm text-neutral-500 mb-2">{p.category}</p>
+                    <p className="text-lg font-bold text-gold-600">{formatPrice(p.price)}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4 pt-4 border-t border-neutral-100">
+                  <Link
+                    to={`/admin/productos/${p.id}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-neutral-100 text-dark-900 rounded-lg hover:bg-neutral-200 transition-colors"
+                  >
+                    <Pencil size={16} />
+                    Editar
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(p.id, p.name)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    <Trash2 size={16} />
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: Table */}
+          <div className="hidden md:block bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
             <table className="w-full text-left">
               <thead className="bg-neutral-50 border-b border-neutral-200">
                 <tr>
                   <th className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase">Imagen</th>
                   <th className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase">Nombre</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase hidden sm:table-cell">Categoría</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase">Categoría</th>
                   <th className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase">Precio</th>
                   <th className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase text-right">Acciones</th>
                 </tr>
@@ -102,7 +139,7 @@ export const ProductListPage: React.FC = () => {
                       />
                     </td>
                     <td className="px-4 py-3 font-medium text-dark-900">{p.name}</td>
-                    <td className="px-4 py-3 text-neutral-500 hidden sm:table-cell">{p.category}</td>
+                    <td className="px-4 py-3 text-neutral-500">{p.category}</td>
                     <td className="px-4 py-3 font-semibold">{formatPrice(p.price)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
@@ -127,7 +164,7 @@ export const ProductListPage: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

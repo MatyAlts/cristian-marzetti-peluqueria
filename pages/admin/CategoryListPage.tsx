@@ -90,47 +90,82 @@ export const CategoryListPage: React.FC = () => {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-neutral-50 border-b border-neutral-200">
-              <tr>
-                <th className="text-left px-6 py-4 font-semibold text-dark-900">ID</th>
-                <th className="text-left px-6 py-4 font-semibold text-dark-900">Nombre</th>
-                <th className="text-left px-6 py-4 font-semibold text-dark-900">Fecha de Creación</th>
-                <th className="text-right px-6 py-4 font-semibold text-dark-900">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((category) => (
-                <tr key={category.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                  <td className="px-6 py-4 text-neutral-600">#{category.id}</td>
-                  <td className="px-6 py-4 font-semibold text-dark-900">{category.name}</td>
-                  <td className="px-6 py-4 text-neutral-600">
-                    {new Date(category.created_at).toLocaleDateString('es-AR')}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        to={`/admin/categorias/${category.id}`}
-                        className="p-2 text-neutral-600 hover:text-gold-500 hover:bg-gold-50 rounded-lg transition-colors"
-                        title="Editar"
-                      >
-                        <Pencil size={18} />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(category.id, category.name)}
-                        className="p-2 text-neutral-600 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Eliminar"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
+        <>
+          {/* Mobile: Cards */}
+          <div className="grid gap-4 md:hidden">
+            {categories.map((category) => (
+              <div key={category.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-dark-900 text-lg mb-1">{category.name}</h3>
+                    <p className="text-sm text-neutral-500">
+                      ID: #{category.id} • Creada: {new Date(category.created_at).toLocaleDateString('es-AR')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-3 border-t border-neutral-100">
+                  <Link
+                    to={`/admin/categorias/${category.id}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-neutral-100 text-dark-900 rounded-lg hover:bg-neutral-200 transition-colors"
+                  >
+                    <Pencil size={16} />
+                    Editar
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(category.id, category.name)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    <Trash2 size={16} />
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: Table */}
+          <div className="hidden md:block bg-white rounded-xl border border-neutral-200 overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-neutral-50 border-b border-neutral-200">
+                <tr>
+                  <th className="text-left px-6 py-4 font-semibold text-dark-900">ID</th>
+                  <th className="text-left px-6 py-4 font-semibold text-dark-900">Nombre</th>
+                  <th className="text-left px-6 py-4 font-semibold text-dark-900">Fecha de Creación</th>
+                  <th className="text-right px-6 py-4 font-semibold text-dark-900">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {categories.map((category) => (
+                  <tr key={category.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
+                    <td className="px-6 py-4 text-neutral-600">#{category.id}</td>
+                    <td className="px-6 py-4 font-semibold text-dark-900">{category.name}</td>
+                    <td className="px-6 py-4 text-neutral-600">
+                      {new Date(category.created_at).toLocaleDateString('es-AR')}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          to={`/admin/categorias/${category.id}`}
+                          className="p-2 text-neutral-600 hover:text-gold-500 hover:bg-gold-50 rounded-lg transition-colors"
+                          title="Editar"
+                        >
+                          <Pencil size={18} />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(category.id, category.name)}
+                          className="p-2 text-neutral-600 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Eliminar"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );
