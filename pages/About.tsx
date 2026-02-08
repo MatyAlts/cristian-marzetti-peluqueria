@@ -21,7 +21,7 @@ export const About: React.FC = () => {
           <div className="space-y-6">
             <h2 className="font-serif text-3xl font-bold">Pasión por la Estética</h2>
             <p className="text-neutral-600 leading-relaxed">
-              Fundada en 2015 por Cristian Marzetti, nuestra peluquería nació con la misión de elevar el estándar del estilismo en Mendoza. Lo que comenzó como un pequeño local familiar, hoy es un referente de calidad y vanguardia.
+              Fundada en 2016 por Cristian Marzetti, nuestra peluquería nació con la misión de elevar el estándar del estilismo en Mendoza. Lo que comenzó como un pequeño local familiar, hoy es un referente de calidad y vanguardia.
             </p>
             <p className="text-neutral-600 leading-relaxed">
               Creemos que cada cliente es único, y por eso nos dedicamos a escuchar, asesorar y crear estilos que no solo se vean bien, sino que resalten la personalidad de quien los lleva.
