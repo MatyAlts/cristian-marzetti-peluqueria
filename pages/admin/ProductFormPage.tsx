@@ -5,7 +5,10 @@ import { Product } from '../../types';
 import { API_URL } from '../../constants';
 import { useAuth } from './AuthContext';
 
-const CATEGORIES = ['Shampoo', 'Acondicionador', 'Tratamiento', 'Styling', 'Color', 'Accesorios'];
+interface Category {
+  id: number;
+  name: string;
+}
 
 export const ProductFormPage: React.FC = () => {
   const { id } = useParams();
@@ -16,12 +19,30 @@ export const ProductFormPage: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(isEdit);
   const [error, setError] = useState('');
+
+  // Fetch categories
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/categories`);
+      if (!res.ok) throw new Error('Error al cargar categorías');
+      const data = await res.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setError('Error al cargar las categorías');
+    }
+  };
 
   useEffect(() => {
     if (!isEdit) return;
@@ -33,7 +54,7 @@ export const ProductFormPage: React.FC = () => {
         setName(product.name);
         setDescription(product.description || '');
         setPrice(String(product.price));
-        setCategory(product.category);
+        setCategoryId(String(product.category_id));
         if (product.image_url) {
           setImagePreview(`${API_URL}${product.image_url}`);
         }
@@ -61,7 +82,7 @@ export const ProductFormPage: React.FC = () => {
     formData.append('name', name);
     formData.append('description', description);
     formData.append('price', price);
-    formData.append('category', category);
+    formData.append('category_id', categoryId);
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -154,20 +175,24 @@ export const ProductFormPage: React.FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1">Categoría *</label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
               required
-              list="category-options"
-              className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
-              placeholder="Ej: Shampoo"
-            />
-            <datalist id="category-options">
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c} />
+              className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent bg-white"
+            >
+              <option value="">Seleccionar categoría...</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
               ))}
-            </datalist>
+            </select>
+            {categories.length === 0 && (
+              <p className="text-xs text-neutral-500 mt-1">
+                No hay categorías disponibles. <a href="/#/admin/categorias/nueva" className="text-gold-500 hover:underline">Crear una</a>
+              </p>
+            )}
           </div>
         </div>
 

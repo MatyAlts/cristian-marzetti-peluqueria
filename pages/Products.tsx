@@ -2,19 +2,55 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
 import { API_URL } from '../constants';
-import { Filter, ShoppingBag, Loader2 } from 'lucide-react';
+import { Filter, ShoppingBag, Loader2, X } from 'lucide-react';
+
+interface Category {
+  id: number;
+  name: string;
+}
 
 export const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [showFilter, setShowFilter] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/products`)
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch(() => setProducts([]))
-      .finally(() => setLoading(false));
+    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategory]);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/categories`);
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const url = selectedCategory
+        ? `${API_URL}/api/products?category_id=${selectedCategory}`
+        : `${API_URL}/api/products`;
+      const res = await fetch(url);
+      const data = await res.json();
+      setProducts(data);
+    } catch (error) {
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatPrice = (price: number) =>
     `$${price.toLocaleString('es-AR', { minimumFractionDigits: 0 })}`;
@@ -28,13 +64,87 @@ export const Products: React.FC = () => {
             <p className="text-neutral-500 mt-1">Calidad profesional para tu hogar</p>
           </div>
 
-          <div className="flex gap-2 w-full md:w-auto">
-             <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg bg-white hover:bg-neutral-50">
-                <Filter size={18} />
-                <span>Filtrar</span>
-             </button>
+          <div className="flex gap-2 w-full md:w-auto relative">
+            <button
+              onClick={() => setShowFilter(!showFilter)}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 border rounded-lg bg-white hover:bg-neutral-50 transition-colors ${
+                selectedCategory ? 'border-gold-500 text-gold-600' : 'border-neutral-300'
+              }`}
+            >
+              <Filter size={18} />
+              <span>Filtrar</span>
+              {selectedCategory && (
+                <span className="ml-1 px-2 py-0.5 bg-gold-500 text-white text-xs rounded-full">
+                  1
+                </span>
+              )}
+            </button>
+
+            {/* Filter dropdown */}
+            {showFilter && (
+              <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-neutral-200 z-10">
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-dark-900">Categorías</h3>
+                    <button
+                      onClick={() => setShowFilter(false)}
+                      className="p-1 hover:bg-neutral-100 rounded transition-colors"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(null);
+                        setShowFilter(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                        selectedCategory === null
+                          ? 'bg-gold-500 text-white font-semibold'
+                          : 'hover:bg-neutral-100'
+                      }`}
+                    >
+                      Todas las categorías
+                    </button>
+                    {categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          setSelectedCategory(category.id);
+                          setShowFilter(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                          selectedCategory === category.id
+                            ? 'bg-gold-500 text-white font-semibold'
+                            : 'hover:bg-neutral-100'
+                        }`}
+                      >
+                        {category.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Active filters */}
+        {selectedCategory && (
+          <div className="mb-6 flex items-center gap-2">
+            <span className="text-sm text-neutral-600">Filtro activo:</span>
+            <div className="flex items-center gap-2 px-3 py-1 bg-gold-100 text-gold-700 rounded-full text-sm">
+              <span>{categories.find((c) => c.id === selectedCategory)?.name}</span>
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="hover:bg-gold-200 rounded-full p-0.5 transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-20">

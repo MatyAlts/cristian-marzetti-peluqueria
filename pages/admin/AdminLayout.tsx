@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { Package, LogOut, Menu, X } from 'lucide-react';
+import { Package, LogOut, Menu, X, Tag } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 export const AdminLayout: React.FC = () => {
@@ -34,6 +34,20 @@ export const AdminLayout: React.FC = () => {
         >
           <Package size={20} />
           Productos
+        </NavLink>
+        <NavLink
+          to="/admin/categorias"
+          onClick={() => setSidebarOpen(false)}
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              isActive
+                ? 'bg-gold-500 text-dark-900 font-semibold'
+                : 'text-neutral-300 hover:bg-dark-700 hover:text-white'
+            }`
+          }
+        >
+          <Tag size={20} />
+          Categorías
         </NavLink>
       </nav>
 

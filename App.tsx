@@ -18,6 +18,8 @@ import { AdminLayout } from './pages/admin/AdminLayout';
 import { LoginPage } from './pages/admin/LoginPage';
 import { ProductListPage } from './pages/admin/ProductListPage';
 import { ProductFormPage } from './pages/admin/ProductFormPage';
+import { CategoryListPage } from './pages/admin/CategoryListPage';
+import { CategoryFormPage } from './pages/admin/CategoryFormPage';
 
 function App() {
   const location = useLocation();
@@ -60,6 +62,9 @@ function App() {
                 <Route path="/admin/productos" element={<ProductListPage />} />
                 <Route path="/admin/productos/nuevo" element={<ProductFormPage />} />
                 <Route path="/admin/productos/:id" element={<ProductFormPage />} />
+                <Route path="/admin/categorias" element={<CategoryListPage />} />
+                <Route path="/admin/categorias/nueva" element={<CategoryFormPage />} />
+                <Route path="/admin/categorias/:id" element={<CategoryFormPage />} />
               </Route>
             </Route>
           </Routes>
