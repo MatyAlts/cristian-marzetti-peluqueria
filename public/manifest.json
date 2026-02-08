@@ -2,7 +2,7 @@
   "name": "Peluquería Marzetti",
   "short_name": "Marzetti",
   "description": "Peluquería de alta gama en Mendoza, Argentina",
-  "start_url": "/",
+  "start_url": "/#/admin",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#D4AF37",
