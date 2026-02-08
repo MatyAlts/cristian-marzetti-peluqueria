@@ -24,7 +24,6 @@ function App() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
-    if (isAdminRoute) return;
     setIsLoading(true);
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
@@ -33,21 +32,37 @@ function App() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [location.pathname, isAdminRoute]);
+  }, [location.pathname]);
 
   if (isAdminRoute) {
     return (
       <AuthProvider>
-        <Routes location={location}>
-          <Route path="/admin" element={<LoginPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AdminLayout />}>
-              <Route path="/admin/productos" element={<ProductListPage />} />
-              <Route path="/admin/productos/nuevo" element={<ProductFormPage />} />
-              <Route path="/admin/productos/:id" element={<ProductFormPage />} />
+        <AnimatePresence mode="wait">
+          {isLoading && (
+            <motion.div
+              key="loader"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <PageLoader />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.3s' }}>
+          <Routes location={location}>
+            <Route path="/admin" element={<LoginPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AdminLayout />}>
+                <Route path="/admin/productos" element={<ProductListPage />} />
+                <Route path="/admin/productos/nuevo" element={<ProductFormPage />} />
+                <Route path="/admin/productos/:id" element={<ProductFormPage />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
+          </Routes>
+        </div>
       </AuthProvider>
     );
   }
