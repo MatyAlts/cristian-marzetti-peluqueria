@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Product } from '../types';
 import { API_URL } from '../constants';
 import { Filter, ShoppingBag, Loader2 } from 'lucide-react';
@@ -46,8 +47,12 @@ export const Products: React.FC = () => {
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {products.map((product) => (
-              <div key={product.id} className="bg-white rounded-xl shadow-sm border border-neutral-100 overflow-hidden flex flex-col">
-                <div className="aspect-square relative overflow-hidden group">
+              <Link
+                key={product.id}
+                to={`/productos/${product.id}`}
+                className="bg-white rounded-xl shadow-sm border border-neutral-100 overflow-hidden flex flex-col hover:shadow-lg hover:border-gold-500 transition-all duration-300 group"
+              >
+                <div className="aspect-square relative overflow-hidden">
                    <img
                     src={product.image_url ? `${API_URL}${product.image_url}` : 'https://placehold.co/400x400?text=Sin+imagen'}
                     alt={product.name}
@@ -62,17 +67,18 @@ export const Products: React.FC = () => {
                   )}
                   <div className="mt-auto pt-4 flex items-center justify-between">
                     <span className="font-bold text-lg">{formatPrice(product.price)}</span>
-                    <a
-                      href={`https://wa.me/5492612692207?text=Hola,%20me%20interesa%20el%20producto%20${product.name}`}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.open(`https://wa.me/5492612692207?text=Hola,%20me%20interesa%20el%20producto%20${product.name}`, '_blank');
+                      }}
                       className="p-2 bg-dark-900 text-white rounded-full hover:bg-gold-500 hover:text-dark-900 transition-colors"
                     >
                       <ShoppingBag size={18} />
-                    </a>
+                    </button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

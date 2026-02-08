@@ -8,6 +8,7 @@ import { ChatWidget } from './components/ChatWidget';
 import { Home } from './pages/Home';
 import { About } from './pages/About';
 import { Products } from './pages/Products';
+import { ProductDetail } from './pages/ProductDetail';
 import { Academy } from './pages/Academy';
 import { Booking } from './pages/Booking';
 import { Contact } from './pages/Contact';
@@ -90,6 +91,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/nosotros" element={<About />} />
             <Route path="/productos" element={<Products />} />
+            <Route path="/productos/:id" element={<ProductDetail />} />
             <Route path="/academia" element={<Academy />} />
             <Route path="/turnos" element={<Booking />} />
             <Route path="/contacto" element={<Contact />} />
