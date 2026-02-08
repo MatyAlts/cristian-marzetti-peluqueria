@@ -13,34 +13,37 @@ export const Booking: React.FC = () => {
     setStep(2);
   };
 
-  const handleDateSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = e.target.value;
-    if (selectedDate) {
-      const date = new Date(selectedDate + 'T00:00:00');
-      const dayOfWeek = date.getDay();
-      
-      // Check if it's Sunday (0), if so, don't set the date
-      if (dayOfWeek === 0) {
-        e.target.value = '';
-        alert('Los domingos no trabajamos. Por favor selecciona otro día.');
-        return;
-      }
-      
-      setDate(selectedDate);
-    }
-  };
-
-  // Get today's date in YYYY-MM-DD format
-  const getTodayDate = () => {
+  // Generate available dates (today + 7 days)
+  const getAvailableDates = () => {
+    const dates = [];
     const today = new Date();
-    return today.toISOString().split('T')[0];
+
+    for (let i = 0; i <= 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+
+      const dayOfWeek = date.getDay();
+      const dateString = date.toISOString().split('T')[0];
+
+      dates.push({
+        date: dateString,
+        dayName: date.toLocaleDateString('es-AR', { weekday: 'short' }),
+        dayNumber: date.getDate(),
+        monthName: date.toLocaleDateString('es-AR', { month: 'short' }),
+        isSunday: dayOfWeek === 0,
+        isToday: i === 0
+      });
+    }
+
+    return dates;
   };
 
-  // Get max date (2 weeks from today) in YYYY-MM-DD format
-  const getMaxDate = () => {
-    const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 14); // 2 weeks = 14 days
-    return maxDate.toISOString().split('T')[0];
+  const handleDateSelect = (dateString: string, isSunday: boolean) => {
+    if (isSunday) {
+      alert('Los domingos no trabajamos. Por favor selecciona otro día.');
+      return;
+    }
+    setDate(dateString);
   };
 
   const finishBooking = () => {
@@ -93,36 +96,57 @@ export const Booking: React.FC = () => {
           {step === 2 && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold mb-4">2. Elige Fecha Preferida</h2>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-neutral-700 mb-3">
                   <Calendar className="w-4 h-4 inline mr-2" />
-                  Fecha
+                  Selecciona una fecha
                 </label>
-                <style>{`
-                  /* Deshabilitar domingos en el calendario */
-                  input[type="date"]::-webkit-calendar-picker-indicator {
-                    cursor: pointer;
-                  }
-                  
-                  /* This will be handled by JavaScript validation */
-                `}</style>
-                <input 
-                  type="date" 
-                  value={date}
-                  className="w-full px-3 py-3 sm:px-4 sm:py-4 border-2 border-neutral-300 rounded-lg text-base sm:text-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none bg-white"
-                  style={{
-                    colorScheme: 'light',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none'
-                  }}
-                  onChange={handleDateSelect}
-                  min={getTodayDate()}
-                  max={getMaxDate()}
-                />
-                <p className="text-xs sm:text-sm text-neutral-500 mt-2">
-                  Horarios de atención: Lunes a Sábado (próximas 2 semanas disponibles)
+
+                {/* Custom Date Picker */}
+                <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                  {getAvailableDates().map((dateInfo) => (
+                    <button
+                      key={dateInfo.date}
+                      type="button"
+                      onClick={() => handleDateSelect(dateInfo.date, dateInfo.isSunday)}
+                      disabled={dateInfo.isSunday}
+                      className={`
+                        relative p-3 sm:p-4 rounded-lg border-2 transition-all text-center
+                        ${dateInfo.isSunday
+                          ? 'bg-neutral-100 border-neutral-200 text-neutral-400 cursor-not-allowed opacity-50'
+                          : date === dateInfo.date
+                            ? 'bg-gold-500 border-gold-500 text-dark-900 font-bold shadow-md'
+                            : 'bg-white border-neutral-200 hover:border-gold-500 hover:bg-gold-50 active:scale-95'
+                        }
+                      `}
+                    >
+                      <div className="text-xs uppercase text-neutral-500 mb-1">
+                        {dateInfo.dayName}
+                      </div>
+                      <div className="text-2xl font-bold">
+                        {dateInfo.dayNumber}
+                      </div>
+                      <div className="text-xs text-neutral-500 mt-1 capitalize">
+                        {dateInfo.monthName}
+                      </div>
+                      {dateInfo.isToday && !dateInfo.isSunday && (
+                        <div className="absolute -top-1 -right-1 bg-gold-500 text-dark-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                          Hoy
+                        </div>
+                      )}
+                      {dateInfo.isSunday && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-0.5 h-full bg-red-400 rotate-45 opacity-50"></div>
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                <p className="text-xs sm:text-sm text-neutral-500 mt-3">
+                  Horarios de atención: Lunes a Sábado
                 </p>
-                <p className="text-xs sm:text-sm text-amber-600 mt-1">
+                <p className="text-xs sm:text-sm text-amber-600">
                   ⚠️ Los domingos no trabajamos
                 </p>
               </div>
