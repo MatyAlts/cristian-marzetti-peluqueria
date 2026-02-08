@@ -49,7 +49,27 @@ export const Booking: React.FC = () => {
   const finishBooking = () => {
     if (!selectedService || !date) return;
     const serviceName = SERVICES.find(s => s.id === selectedService)?.name;
-    const message = encodeURIComponent(`Hola, quiero reservar un turno para *${serviceName}* el día *${date}*.`);
+
+    // Calculate the day description
+    const selectedDate = new Date(date + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const diffTime = selectedDate.getTime() - today.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    let dayDescription: string;
+    if (diffDays === 0) {
+      dayDescription = 'hoy';
+    } else if (diffDays === 1) {
+      dayDescription = 'mañana';
+    } else {
+      // Get the day name in Spanish
+      const dayName = selectedDate.toLocaleDateString('es-AR', { weekday: 'long' });
+      dayDescription = `el ${dayName}`;
+    }
+
+    const message = encodeURIComponent(`Hola, quiero reservar un turno para *${serviceName}* para ${dayDescription}.`);
     window.open(`https://wa.me/${CONTACT_INFO.phone.replace('+', '')}?text=${message}`, '_blank');
   };
 
