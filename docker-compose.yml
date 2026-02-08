@@ -3,7 +3,7 @@ services:
     build:
       context: .
       args:
-        VITE_API_URL: ""
+        VITE_API_URL: "https://marzetti-peluqueria-backend.326kz3.easypanel.host"
     restart: unless-stopped
     expose:
       - "80"
