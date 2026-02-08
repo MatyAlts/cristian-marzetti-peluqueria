@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { PageLoader } from './components/PageLoader';
-import { ChatWidget } from './components/ChatWidget';
+// import { ChatWidget } from './components/ChatWidget';
 import { Home } from './pages/Home';
 import { About } from './pages/About';
 import { Products } from './pages/Products';
@@ -103,7 +103,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
-        <ChatWidget />
+        {/* <ChatWidget /> */}
       </div>
     </>
   );
