@@ -71,9 +71,9 @@ export const CategoryListPage: React.FC = () => {
         </div>
         <Link
           to="/admin/categorias/nueva"
-          className="flex items-center gap-2 px-6 py-3 bg-dark-900 text-white rounded-lg hover:bg-gold-500 hover:text-dark-900 transition-colors font-semibold"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gold-500 text-dark-900 font-semibold hover:bg-gold-400 transition-colors"
         >
-          <Plus size={20} />
+          <Plus size={18} />
           Nueva Categoría
         </Link>
       </div>
@@ -83,9 +83,9 @@ export const CategoryListPage: React.FC = () => {
           <p className="text-neutral-500 mb-4">No hay categorías creadas</p>
           <Link
             to="/admin/categorias/nueva"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-dark-900 text-white rounded-lg hover:bg-gold-500 hover:text-dark-900 transition-colors font-semibold"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gold-500 text-dark-900 font-semibold hover:bg-gold-400 transition-colors"
           >
-            <Plus size={20} />
+            <Plus size={18} />
             Crear Primera Categoría
           </Link>
         </div>
