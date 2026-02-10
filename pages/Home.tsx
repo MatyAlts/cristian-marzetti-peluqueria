@@ -482,20 +482,28 @@ export const Home: React.FC = () => {
           onMouseMove={handleMouseMove}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
+          onDragStart={(e) => e.preventDefault()}
         >
           {/* 
             Strategy: 
             Duplicamos los items suficientes veces (mínimo 6 sets) para que el scroll 
             siempre tenga contenido hacia ambos lados. El 'jump' ocurre en el evento onScroll.
           */}
-          <div className="flex px-4 gap-4 sm:gap-6 min-w-max">
+          <div className="flex px-4 gap-4 sm:gap-6 min-w-max" onDragStart={(e) => e.preventDefault()}>
             {(products.length > 0 ? [...displayProducts] : []).map((product, index) => (
               <div 
                 key={`${product.id}-${index}`} 
                 className="w-[280px] sm:w-[320px] bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-neutral-100 select-none hw-accelerate ring-1 ring-black/5"
                 draggable="false"
               >
-                <Link to={`/productos/${product.id}`} className="block">
+                <Link 
+                  to={`/productos/${product.id}`} 
+                  className="block"
+                  onDragStart={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    if (isDragging) e.preventDefault();
+                  }}
+                >
                   <div className="h-64 overflow-hidden relative group">
                     <img
                       src={product.image_url ? `${API_URL}${product.image_url}` : 'https://placehold.co/400x400?text=Sin+imagen'}
