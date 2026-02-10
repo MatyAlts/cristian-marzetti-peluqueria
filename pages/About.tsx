@@ -4,7 +4,7 @@ import { Star, Award, Users } from 'lucide-react';
 
 export const About: React.FC = () => {
   return (
-    <div className="pt-20 pb-16">
+    <div className="pb-16">
       {/* Header */}
       <section className="bg-neutral-50 py-12 lg:py-20">
         <div className="container mx-auto px-4 text-center">

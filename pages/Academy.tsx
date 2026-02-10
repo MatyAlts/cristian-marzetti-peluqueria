@@ -14,7 +14,7 @@ export const Academy: React.FC = () => {
     }
   };
   return (
-    <div className="pt-20 pb-16">
+    <div className="pb-16">
       {/* Hero */}
       <section className="bg-dark-900 text-white py-16">
         <div className="container mx-auto px-4">
@@ -59,13 +59,11 @@ export const Academy: React.FC = () => {
       {/* Benefits */}
       <section className="py-12 bg-neutral-50">
          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {['Certificación Profesional', 'Prácticas con Modelos Reales', 'Bolsa de Trabajo'].map((benefit, i) => (
-                    <div key={i} className="flex items-center gap-4 bg-white p-6 rounded-lg shadow-sm">
-                        <CheckCircle className="text-gold-500 w-8 h-8 shrink-0" />
-                        <span className="font-bold text-lg">{benefit}</span>
-                    </div>
-                ))}
+            <div className="flex justify-center">
+                <div className="flex items-center gap-4 bg-white p-6 rounded-lg shadow-sm border border-neutral-100">
+                    <CheckCircle className="text-gold-500 w-8 h-8 shrink-0" />
+                    <span className="font-bold text-lg">Prácticas con Modelos Reales</span>
+                </div>
             </div>
          </div>
       </section>
@@ -73,7 +71,7 @@ export const Academy: React.FC = () => {
       {/* Courses Grid */}
       <section className="py-16 container mx-auto px-4">
         <h2 className="font-serif text-3xl font-bold text-center mb-12">Nuestros Cursos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {COURSES.map((course) => (
             <div key={course.id} className="bg-white rounded-xl shadow-lg overflow-hidden border border-neutral-100 flex flex-col">
               <div className="h-48 overflow-hidden">

@@ -1,11 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#D4AF37" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Peluquería Marzetti | Mendoza</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -14,52 +17,72 @@
           extend: {
             colors: {
               gold: {
-                400: '#E6C200',
-                500: '#D4AF37', // Primary Gold
-                600: '#B5952F',
+                400: "#E6C200",
+                500: "#D4AF37", // Primary Gold
+                600: "#B5952F",
               },
               dark: {
-                900: '#121212',
-                800: '#1E1E1E',
-                700: '#2D2D2D',
-              }
+                900: "#121212",
+                800: "#1E1E1E",
+                700: "#2D2D2D",
+              },
             },
             fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-            }
-          }
-        }
-      }
+              sans: ["Inter", "sans-serif"],
+              serif: ["Playfair Display", "serif"],
+            },
+          },
+        },
+      };
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      /* iOS Smooth Scrolling Optimizations */
+      /* iOS Smooth Scrolling & Stability Optimizations */
+      :root {
+        /* Fallback for browsers that don't support svh/dvh yet */
+        --vh: 1vh;
+      }
+
       * {
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
+        box-sizing: border-box;
       }
       
       html {
         -webkit-text-size-adjust: 100%;
         scroll-behavior: smooth;
+        height: -webkit-fill-available;
+        overflow-x: hidden;
       }
       
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        overscroll-behavior-y: none;
         position: relative;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        overflow-x: hidden;
+        /* Allow natural bounce scroll on iOS but prevent 'jumpy' refresh triggers while active */
+        overscroll-behavior-y: auto;
+        margin: 0;
+        padding: 0;
       }
       
-      /* Fix for iOS Chrome navbar */
+      /* Fix for iOS Chrome navbar jumps */
       nav {
-        -webkit-transform: translate3d(0, 0, 0);
         transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
+        /* Handle safe area for notched devices */
+        padding-top: env(safe-area-inset-top);
       }
       
+      /* Standardized scrollbars */
       .hide-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -67,20 +90,12 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-        overscroll-behavior-x: contain;
       }
       
       /* iOS Momentum Scrolling */
       .ios-scroll {
         -webkit-overflow-scrolling: touch;
         scroll-behavior: auto;
-        scroll-snap-type: x proximity;
-        overscroll-behavior-x: contain;
-      }
-      
-      .ios-scroll > * {
-        scroll-snap-align: start;
       }
       
       /* Hardware acceleration for better iOS performance */
@@ -93,18 +108,29 @@
       /* Optimize image rendering on iOS */
       img {
         -webkit-user-drag: none;
-        user-select: none;
-        pointer-events: none;
+        -webkit-touch-callout: none;
       }
       
-      /* Smooth transitions optimized for iOS */
-      .transition-smooth {
-        transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+      /* Fix jumpy transitions on mobile */
+      @media (max-width: 768px) {
+        .transition-all {
+          transition-duration: 200ms !important;
+        }
       }
     </style>
   </head>
   <body class="bg-neutral-50 text-neutral-900 font-sans antialiased">
     <div id="root"></div>
+    <script>
+      // Fix for 100vh bug on mobile browsers
+      const setHeight = () => {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      };
+      window.addEventListener('resize', setHeight);
+      window.addEventListener('orientationchange', setHeight);
+      setHeight();
+    </script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

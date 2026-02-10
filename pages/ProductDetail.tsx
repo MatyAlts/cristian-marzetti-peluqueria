@@ -28,7 +28,7 @@ export const ProductDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center pt-20">
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader2 size={48} className="animate-spin text-gold-500" />
       </div>
     );
@@ -36,7 +36,7 @@ export const ProductDetail: React.FC = () => {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-neutral-50 pt-20 pb-16">
+      <div className="min-h-screen bg-neutral-50 pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center py-20">
             <h1 className="font-serif text-3xl font-bold text-dark-900 mb-4">
@@ -59,7 +59,7 @@ export const ProductDetail: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 pt-20 pb-16">
+    <div className="min-h-screen bg-neutral-50 pb-16">
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
         <Link

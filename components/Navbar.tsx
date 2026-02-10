@@ -30,7 +30,7 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <nav 
-        className="fixed top-0 left-0 w-full z-50 bg-dark-900 shadow-lg py-3 transition-all duration-300"
+        className="fixed top-0 left-0 w-full z-50 bg-dark-900 shadow-lg h-16 flex items-center transition-all duration-300"
         style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">

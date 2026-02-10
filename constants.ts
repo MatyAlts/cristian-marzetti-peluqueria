@@ -35,7 +35,6 @@ export const TEAM: TeamMember[] = [
 ];
 
 export const COURSES: Course[] = [
-  { id: '1', title: 'Peinados y Recogidos', duration: '3 Meses', description: 'Técnicas avanzadas para novias, 15 años y eventos sociales.', image: 'https://picsum.photos/600/400?random=30' },
-  { id: '2', title: 'Colorimetría Avanzada', duration: '4 Meses', description: 'Domina las técnicas de color, decoloración y correcciones.', image: 'https://picsum.photos/600/400?random=31' },
-  { id: '3', title: 'Corte Femenino', duration: '5 Meses', description: 'Técnicas de texturizado, capas y cortes de tendencia.', image: 'https://picsum.photos/600/400?random=32' },
+  { id: '1', title: 'Curso Inicial de Peluqueria', duration: '4 Meses', description: 'Comienza tu carrera profesional desde cero con bases sólidas y técnicas esenciales.', image: '/images/academia/curso_1.jpg' },
+  { id: '2', title: 'Curso avanzado', duration: '3 Días', description: 'Módulos intensivos de perfeccionamiento para profesionales que buscan elevar su técnica.', image: '/images/academia/curso_2.jpg' },
 ];

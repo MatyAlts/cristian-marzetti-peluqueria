@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Navbar } from './components/Navbar';
+import { AnnouncementBar } from './components/AnnouncementBar';
 import { Footer } from './components/Footer';
 import { PageLoader } from './components/PageLoader';
 // import { ChatWidget } from './components/ChatWidget';
@@ -25,6 +26,7 @@ function App() {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     setIsLoading(true);
@@ -91,7 +93,8 @@ function App() {
 
       <div className="flex flex-col min-h-screen" style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.3s' }}>
         <Navbar />
-        <main className="flex-grow">
+        <AnnouncementBar />
+        <main className={`flex-grow ${isAdminRoute || isHomePage ? '' : 'pt-[90px]'}`}>
           <Routes location={location}>
             <Route path="/" element={<Home />} />
             <Route path="/nosotros" element={<About />} />

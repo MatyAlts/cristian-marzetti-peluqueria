@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Scissors, Star, Calendar, GraduationCap } from 'lucide-react';
+import { ArrowRight, Scissors, Star, Calendar, GraduationCap, ShoppingBag } from 'lucide-react';
 import { Button } from '../components/Button';
 import { SERVICES, API_URL } from '../constants';
 import { Product } from '../types';
@@ -32,21 +32,25 @@ export const Home: React.FC = () => {
   const formatPrice = (price: number) =>
     `$${price.toLocaleString('es-AR', { minimumFractionDigits: 0 })}`;
 
-  // Duplicate products to create infinite scroll illusion
-  // 6 sets for smoother infinite scroll
-  const displayProducts = [...products, ...products, ...products, ...products, ...products, ...products];
+  // Calculate how many sets we need to ensure a massive scrollable area
+  // We want at least 40 items total to make it very hard to hit a 'wall' even with 1-2 products
+  const setsCount = products.length > 0 ? Math.max(10, Math.ceil(40 / products.length)) : 0;
+  const displayProducts = Array(setsCount).fill(products).flat();
 
   // Initialize scroll position in the middle for bidirectional infinite scroll
   useEffect(() => {
     const container = scrollRef.current;
-    if (container) {
-      // Start exactly in the middle (2.5 segments of 6)
-      const targetScroll = (container.scrollWidth / 6) * 2.5;
+    if (container && products.length > 0) {
+      // Start in the middle of the massive set
+      const segmentWidth = container.scrollWidth / setsCount;
+      const middleIndex = Math.floor(setsCount / 2);
+      const targetScroll = segmentWidth * middleIndex;
+      
       container.scrollLeft = targetScroll;
       scrollPosition.current = targetScroll;
       lastScrollLeft.current = targetScroll;
     }
-  }, []);
+  }, [products.length]);
 
   // Sync scrollPosition ref and handle infinite scroll bounds
   useEffect(() => {
@@ -89,18 +93,21 @@ export const Home: React.FC = () => {
       }, 150);
       
       // Check bounds for infinite scroll during manual scroll
-      const segmentWidth = container.scrollWidth / 6;
-      const currentSegment = Math.floor(currentScroll / segmentWidth);
+      const segmentWidth = container.scrollWidth / setsCount;
+      const totalWidth = container.scrollWidth;
       
-      // Only reset if user scrolled to the edges
-      if (currentSegment >= 4 && currentScroll >= segmentWidth * 4.5) {
-        const offset = (currentScroll - segmentWidth * 4.5);
-        scrollPosition.current = segmentWidth * 2.5 + offset;
-        container.scrollLeft = scrollPosition.current;
-      } else if (currentSegment <= 0 && currentScroll < segmentWidth * 0.5) {
-        const offset = currentScroll;
-        scrollPosition.current = segmentWidth * 2.5 + offset;
-        container.scrollLeft = scrollPosition.current;
+      // If we're too far to the right (past 70% of the area)
+      if (currentScroll > totalWidth * 0.7) {
+        const offset = currentScroll - (totalWidth * 0.5);
+        scrollPosition.current = offset;
+        container.scrollLeft = offset;
+      } 
+      // If we're too far to the left (before 30% of the area)
+      else if (currentScroll < totalWidth * 0.3) {
+        const offset = currentScroll + (totalWidth * 0.2);
+        // We jump it forward to a safe middle ground
+        scrollPosition.current = offset;
+        container.scrollLeft = offset;
       }
     };
 
@@ -111,7 +118,7 @@ export const Home: React.FC = () => {
         clearTimeout(scrollTimeout.current);
       }
     };
-  }, [isDragging, isPaused]);
+  }, [isDragging, isPaused, setsCount]);
 
   // Auto-scroll animation - works on all devices
   useEffect(() => {
@@ -134,17 +141,12 @@ export const Home: React.FC = () => {
         scrollPosition.current += scrollSpeed * delta;
         container.scrollLeft = scrollPosition.current;
 
-        // Infinite loop logic
-        const segmentWidth = container.scrollWidth / 6;
+        // Infinite loop logic 
+        const totalWidth = container.scrollWidth;
         
-        // When reaching end of segment 4, jump back to segment 2
-        if (scrollPosition.current >= segmentWidth * 4.5) {
-          scrollPosition.current = segmentWidth * 2.5;
-          container.scrollLeft = scrollPosition.current;
-        }
-        // When going back to start, jump forward
-        else if (scrollPosition.current <= segmentWidth * 0.5) {
-          scrollPosition.current = segmentWidth * 2.5;
+        // Jump back to middle when past 70%
+        if (scrollPosition.current > totalWidth * 0.7) {
+          scrollPosition.current = totalWidth * 0.4;
           container.scrollLeft = scrollPosition.current;
         }
         
@@ -280,7 +282,7 @@ export const Home: React.FC = () => {
   return (
     <div className="flex flex-col w-full">
       {/* 1. Hero Section - Mobile First */}
-      <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[100svh] flex items-center justify-center overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
@@ -311,6 +313,79 @@ export const Home: React.FC = () => {
             </Link>
           </div>
         </div>
+      </section>
+      
+      {/* 1.5. Announcement Section - International Courses */}
+      <section className="py-16 lg:py-24 bg-dark-900 text-white overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+            
+            {/* 1. Header/Title - Always first on Mobile via default grid order */}
+            <div className="space-y-6 text-center lg:text-left">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-sm font-bold tracking-widest uppercase">
+                Evento Especial
+              </div>
+              
+              <h2 className="font-serif text-4xl lg:text-6xl font-bold leading-tight">
+                Cristian Marzetti en <span className="text-gold-500 text-glow">Lima, Perú</span>
+              </h2>
+
+              {/* 2. Image Section - Placed here to be 2nd on Mobile (between Title and Description) */}
+              {/* In Desktop, we move this group to the left using grid-order or wrapping */}
+              <div className="block lg:hidden relative group my-8">
+                <div className="absolute -inset-4 bg-gold-500/5 rounded-[2rem] blur-2xl group-hover:bg-gold-500/10 transition-all"></div>
+                <div className="relative z-10 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 aspect-video">
+                  <img 
+                    src="/images/academia/anuncio_1.jpg" 
+                    alt="Cursos Ts Educacion Lima" 
+                    className="w-full h-full object-cover object-[center_35%] transform group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-6">
+                <p className="text-xl lg:text-2xl text-gray-100 font-light leading-relaxed">
+                  Se anuncia que del <span className="text-gold-500 font-semibold border-b-2 border-gold-500/30 pb-1">20 de febrero al 5 de marzo</span>, se estarán dictando cursos magistrales en la academia de <span className="font-bold text-white">TS Educación</span>.
+                </p>
+                
+                <p className="text-gray-400 text-lg lg:text-xl leading-relaxed">
+                  Una oportunidad única para perfeccionar técnicas de vanguardia como el <span className="text-white font-medium">corte shaggy rizado</span> y diseño de imagen con el estándar de excelencia Marzetti.
+                </p>
+              </div>
+              
+              <div className="pt-4">
+                <a 
+                  href={`https://wa.me/5492612692207?text=${encodeURIComponent("Hola, quisiera más información sobre la participación en Ts Educación")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block w-full sm:w-auto"
+                >
+                  <Button className="w-full sm:w-auto px-12 py-4 text-xl bg-gold-500 hover:bg-gold-400 text-dark-900 border-none shadow-[0_0_40px_rgba(212,175,55,0.25)] hover:shadow-[0_0_60px_rgba(212,175,55,0.45)] transition-all duration-300">
+                    Mas info
+                  </Button>
+                </a>
+              </div>
+            </div>
+
+            {/* 3. Image Section - Hidden on Mobile, Visible on Desktop (on the correct column) */}
+            <div className="hidden lg:block relative group order-first">
+              <div className="absolute -inset-4 bg-gold-500/5 rounded-[2rem] blur-2xl group-hover:bg-gold-500/10 transition-all"></div>
+              <div className="relative z-10 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 aspect-square">
+                <img 
+                  src="/images/academia/anuncio_1.jpg" 
+                  alt="Cursos Ts Educacion Lima" 
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <style>{`
+          .text-glow {
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+          }
+        `}</style>
       </section>
 
       {/* 2. Quienes Somos (Brief) */}
@@ -379,8 +454,8 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Featured Products (Infinite Scroll + Drag) */}
-      <section className="py-16 lg:py-24 bg-neutral-50">
+      {/* 4. Featured Products (Seamless Infinite Scroll) */}
+      <section className="py-16 lg:py-24 bg-neutral-50 overflow-hidden">
         <div className="container mx-auto px-4 mb-8 flex justify-between items-end">
           <div>
             <h2 className="font-serif text-3xl font-bold text-dark-900 mb-2">Productos Destacados</h2>
@@ -394,55 +469,65 @@ export const Home: React.FC = () => {
         {/* Scroll Container */}
         <div 
           ref={scrollRef}
-          className={`w-full overflow-x-scroll pb-8 hide-scrollbar cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
+          className={`w-full overflow-x-auto pb-8 hide-scrollbar cursor-grab active:cursor-grabbing hw-accelerate`}
           style={{ 
             WebkitOverflowScrolling: 'touch',
-            scrollBehavior: 'auto',
-            overscrollBehaviorX: 'none'
+            scrollBehavior: 'auto', // Important for seamless jumps
+            overscrollBehaviorX: 'none',
+            touchAction: 'auto'
           }}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
           onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
+          {/* 
+            Strategy: 
+            Duplicamos los items suficientes veces (mínimo 6 sets) para que el scroll 
+            siempre tenga contenido hacia ambos lados. El 'jump' ocurre en el evento onScroll.
+          */}
           <div className="flex px-4 gap-4 sm:gap-6 min-w-max">
-            {displayProducts.map((product, index) => (
+            {(products.length > 0 ? [...displayProducts] : []).map((product, index) => (
               <div 
                 key={`${product.id}-${index}`} 
-                className="w-[280px] sm:w-[320px] bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-neutral-100 select-none hw-accelerate"
+                className="w-[280px] sm:w-[320px] bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-neutral-100 select-none hw-accelerate ring-1 ring-black/5"
                 draggable="false"
               >
-                <div className="h-64 overflow-hidden relative group">
-                  <img
-                    src={product.image_url ? `${API_URL}${product.image_url}` : 'https://placehold.co/400x400?text=Sin+imagen'}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none hw-accelerate"
-                    draggable="false"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-                </div>
+                <Link to={`/productos/${product.id}`} className="block">
+                  <div className="h-64 overflow-hidden relative group">
+                    <img
+                      src={product.image_url ? `${API_URL}${product.image_url}` : 'https://placehold.co/400x400?text=Sin+imagen'}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none hw-accelerate"
+                      draggable="false"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                  </div>
+                </Link>
                 <div className="p-4">
                   <span className="text-xs font-bold text-gold-600 tracking-wider uppercase">{product.category}</span>
-                  <h3 className="font-bold text-lg text-dark-900 mt-1 mb-2">{product.name}</h3>
+                  <h3 className="font-bold text-lg text-dark-900 mt-1 mb-2 truncate">{product.name}</h3>
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold text-dark-900">{formatPrice(product.price)}</span>
-                    <Link to="/productos" onClick={(e) => {
-                      if (isDragging) e.preventDefault();
-                    }}>
-                       <button className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-dark-900 hover:bg-gold-500 transition-colors">
-                        <ArrowRight size={16} />
-                       </button>
-                    </Link>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.open(`https://wa.me/5492612692207?text=${encodeURIComponent(`Hola, me interesa el producto ${product.name}`)}`, '_blank');
+                      }}
+                      className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-dark-900 hover:bg-gold-500 transition-colors"
+                    >
+                      <ShoppingBag size={18} />
+                    </button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="px-4 sm:hidden">
+
+        <div className="px-4 mt-4 sm:hidden">
             <Link to="/productos">
               <Button variant="outline" fullWidth>Ver Catálogo Completo</Button>
             </Link>

@@ -74,7 +74,7 @@ export const Booking: React.FC = () => {
   };
 
   return (
-    <div className="pt-24 pb-16 min-h-screen bg-neutral-50">
+    <div className="pb-16 min-h-screen bg-neutral-50">
       <div className="container mx-auto px-4 max-w-2xl">
         <h1 className="font-serif text-3xl font-bold text-center mb-2">Reservar Turno</h1>
         <p className="text-center text-neutral-500 mb-8">Agenda tu visita en simples pasos</p>

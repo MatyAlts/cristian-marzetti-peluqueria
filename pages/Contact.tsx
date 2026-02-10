@@ -5,7 +5,7 @@ import { Button } from '../components/Button';
 
 export const Contact: React.FC = () => {
   return (
-    <div className="pt-20 pb-16 min-h-screen">
+    <div className="pb-16 min-h-screen">
       <div className="container mx-auto px-4">
         <h1 className="font-serif text-3xl lg:text-5xl font-bold text-center mb-12">Contacto</h1>
 
